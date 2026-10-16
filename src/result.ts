@@ -1,4 +1,16 @@
-export class Result<T> {
+interface Ok<T> extends ResultImpl<T> {
+  getValue(): T;
+  getError(): undefined;
+}
+
+interface Err<T> extends ResultImpl<T> {
+  getValue(): undefined;
+  getError(): Error;
+}
+
+export type Result<T> = Ok<T> | Err<T>;
+
+class ResultImpl<T> {
   private readonly ok: boolean;
   private readonly value?: T | undefined;
   private readonly error?: Error | undefined;
@@ -10,18 +22,18 @@ export class Result<T> {
   }
 
   static ok<T>(value?: T): Result<T> {
-    return new Result<T>(true, value);
+    return new ResultImpl<T>(true, value) as Result<T>;
   }
 
   static error<T>(error: Error): Result<T> {
-    return new Result<T>(false, undefined, error);
+    return new ResultImpl<T>(false, undefined, error) as Result<T>;
   }
 
-  isOk(): boolean {
+  isOk(): this is Ok<T> {
     return this.ok;
   }
 
-  isError(): boolean {
+  isError(): this is Err<T> {
     return !this.ok;
   }
 
@@ -33,3 +45,5 @@ export class Result<T> {
     return this.error;
   }
 }
+
+export const Result = ResultImpl;
