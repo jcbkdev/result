@@ -21,6 +21,8 @@ class ResultImpl<T> {
     this.error = error;
   }
 
+  static ok(): Result<void>;
+  static ok<T>(value: T): Result<T>;
   static ok<T>(value?: T): Result<T> {
     return new ResultImpl<T>(true, value) as Result<T>;
   }
