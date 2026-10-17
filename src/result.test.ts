@@ -21,6 +21,17 @@ describe('Result', () => {
     test('getError', () => {
       expect(result.getError()).toBeUndefined();
     });
+
+    test('without a value is allowed for Result<void>', () => {
+      const result: Result<void> = Result.ok();
+      expect(result.isOk()).toBe(true);
+      expect(result.getValue()).toBeUndefined();
+    });
+
+    test('without a value is NOT assignable to Result<number>', () => {
+      // @ts-expect-error: a missing value must not satisfy Result<number>
+      const result: Result<number> = Result.ok();
+    });
   });
 
   describe('Result.error', () => {

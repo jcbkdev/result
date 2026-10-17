@@ -35,8 +35,7 @@ if (result.isError()) {
 
 if (result.isOk()) {
   console.log(result.getValue());
-}
-else {
+} else {
   console.error(result.getError());
 }
 ```
@@ -47,7 +46,8 @@ else {
 
 | Method                | Description                                              |
 | --------------------- | -------------------------------------------------------- |
-| `Result.ok(value?)`   | Creates a successful result, optionally holding a value. |
+| `Result.ok()`         | Creates a successful `Result<void>`, with no value.      |
+| `Result.ok(value)`    | Creates a successful result, holding a value.            |
 | `Result.error(error)` | Creates a failed result holding an `Error`.              |
 
 ### Inspecting a result
@@ -58,7 +58,6 @@ else {
 | `isError()`  | `boolean`            | `true` if the result is a failure.                 |
 | `getValue()` | `T \| undefined`     | The value of a success. `undefined` for a failure. |
 | `getError()` | `Error \| undefined` | The error of a failure. `undefined` for a success. |
-|              |                      |                                                    |
 
 ## Notes
 
@@ -84,6 +83,25 @@ function parseUrl(input: string): Result<URL> {
     return Result.ok(new URL(input));
   } catch (error) {
     // Any value can be thrown in JavaScript, so make sure an Error is returned
+    return Result.error(error instanceof Error ? error : new Error(String(error)));
+  }
+}
+```
+
+### Results without a value
+
+`Result.ok()` with no argument returns a `Result<void>`. For any other type, pass the value explicitly, even if it is `undefined`:
+
+```ts
+function deleteUser(id: string): Result<void> {
+  db.remove(id);
+  return Result.ok();
+}
+
+function findUser(id: string): Result<User | undefined> {
+  try {
+    return Result.ok(db.get(id)); // undefined if there is no such user
+  } catch (error) {
     return Result.error(error instanceof Error ? error : new Error(String(error)));
   }
 }
