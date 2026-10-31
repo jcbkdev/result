@@ -38,26 +38,34 @@ if (result.isOk()) {
 } else {
   console.error(result.getError());
 }
+
+// or handle both cases in one expression
+
+const message = result.match({
+  ok: (age) => `Age is ${age}`,
+  error: (error) => error.message,
+});
 ```
 
 ## Reference
 
 ### Creating a result
 
-| Method                | Description                                              |
-| --------------------- | -------------------------------------------------------- |
-| `Result.ok()`         | Creates a successful `Result<void>`, with no value.      |
-| `Result.ok(value)`    | Creates a successful result, holding a value.            |
-| `Result.error(error)` | Creates a failed result holding an `Error`.              |
+| Method                | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `Result.ok()`         | Creates a successful `Result<void>`, with no value. |
+| `Result.ok(value)`    | Creates a successful result, holding a value.       |
+| `Result.error(error)` | Creates a failed result holding an `Error`.         |
 
 ### Inspecting a result
 
-| Method       | Returns              | Description                                        |
-| ------------ | -------------------- | -------------------------------------------------- |
-| `isOk()`     | `boolean`            | `true` if the result is a success.                 |
-| `isError()`  | `boolean`            | `true` if the result is a failure.                 |
-| `getValue()` | `T \| undefined`     | The value of a success. `undefined` for a failure. |
-| `getError()` | `Error \| undefined` | The error of a failure. `undefined` for a success. |
+| Method                 | Returns              | Description                                                                                                         |
+| ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `isOk()`               | `boolean`            | `true` if the result is a success.                                                                                  |
+| `isError()`            | `boolean`            | `true` if the result is a failure.                                                                                  |
+| `getValue()`           | `T \| undefined`     | The value of a success. `undefined` for a failure.                                                                  |
+| `getError()`           | `Error \| undefined` | The error of a failure. `undefined` for a success.                                                                  |
+| `match({ ok, error })` | `O \| E`             | Calls `ok(value): O` for a success or `error(error): E` for a failure, and returns what the called handler returns. |
 
 ## Notes
 
@@ -72,6 +80,19 @@ if (result.isOk()) { /* ... */ }
 // Incorrect: a success holding a falsy value is treated as a failure
 if (result.getValue()) { /* ... */ }
 ```
+
+### Using match
+
+`match` handles both outcomes in one expression. You have to provide both handlers, so you can't forget the error case, and you get a value back without writing an `if`/`else`:
+
+```ts
+const message = parseAge(input).match({
+  ok: (age) => `Age is ${age}`,
+  error: (error) => `Invalid input: ${error.message}`,
+});
+```
+
+Use `isOk()` / `isError()` instead when you need to return early or run statements in a branch rather than produce a value.
 
 ### Using try/catch
 
