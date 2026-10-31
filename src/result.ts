@@ -46,6 +46,20 @@ class ResultImpl<T> {
   getError(): Error | undefined {
     return this.error;
   }
+
+  match<O, E = O>({
+    ok,
+    error,
+  }: {
+    ok: (value: T) => O;
+    error: (value: Error) => E;
+  }): O | E {
+    if (this.isOk()) {
+      return ok(this.getValue() as T);
+    } else {
+      return error(this.getError() as Error);
+    }
+  }
 }
 
 export const Result = ResultImpl;
