@@ -1,6 +1,6 @@
 {
   "name": "@jcbkdev/result",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "A Result type for TypeScript that makes errors explicit in function signatures",
   "main": "./dist/index.cjs",
